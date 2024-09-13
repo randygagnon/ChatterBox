@@ -9,6 +9,8 @@ services:
     build: 
       context: ./
       dockerfile: ./docker/Dockerfile
+    env_file:
+      - chatterbox/netbox.env 
     ports:
       - "8585:8585"
     volumes:
