@@ -160,7 +160,7 @@ class Chatterbox:
 
     def split_into_chunks(self):
         # Create a text splitter
-        self.self.text_splitter = SemanticChunker(OpenAIEmbeddings())
+        self.text_splitter = SemanticChunker(OpenAIEmbeddings())
         self.docs = self.text_splitter.split_documents(self.pages)
 
     def store_in_chroma(self):
