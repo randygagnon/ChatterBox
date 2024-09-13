@@ -1,41 +1,31 @@
-FROM ubuntu:latest
-
+FROM ubuntu:24.04
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN echo "==> Upgrading apk and installing system utilities ...." \
- && apt -y update \
- && apt-get install -y wget \
- && apt-get -y install sudo \
- && sudo apt-get update -y
+# Install system utilities and Python3
+RUN echo "==> Installing system utilities...." \
+ && apt-get update -y \
+ && apt-get install -y wget sudo python3 python3-pip python3-venv dos2unix openssh-client
 
-RUN echo "==> Installing Python3 and pip ...." \  
- && apt-get install python3 -y \
- && apt install python3-pip -y \
- && apt install openssh-client -y
+# Set up Python Virtual Environment
+RUN echo "==> Creating Python virtual environment..." \
+ && python3 -m venv /opt/venv
 
-RUN echo "==> Install dos2unix..." \
-  && sudo apt-get install dos2unix -y 
+# Activate the virtual environment and install Python packages
+RUN echo "==> Installing Python packages inside virtual environment..." \
+ && /opt/venv/bin/pip install --upgrade pip \
+ && /opt/venv/bin/pip install langchain_experimental langchain langchain-openai langchain-community \
+ && /opt/venv/bin/pip install chromadb openai tiktoken jq streamlit aiofiles aiohttp
 
-RUN echo "==> Install langchain requirements.." \
-  && pip install -U --quiet langchain_experimental langchain langchain-openai langchain-community \
-  && pip install chromadb \
-  && pip install openai \
-  && pip install tiktoken
+# Set the default PATH to use the virtual environment’s pip and python
+ENV PATH="/opt/venv/bin:$PATH"
 
-RUN echo "==> Install jq.." \
-  && pip install jq
-
-RUN echo "==> Install streamlit.." \
-  && pip install streamlit
-
-RUN echo "==> Install aio.." \
-  && pip install aiofiles \
-  && pip install aiohttp
-
+# Copy the application files
 COPY /chatterbox /chatterbox/
 COPY /scripts /scripts/
 
+# Convert script line endings (if necessary)
 RUN echo "==> Convert script..." \
-  && dos2unix /scripts/startup.sh
+ && dos2unix /scripts/startup.sh
 
+# Set the entry point to run the startup script
 CMD ["/bin/bash", "/scripts/startup.sh"]
