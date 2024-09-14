@@ -14,7 +14,7 @@ RUN echo "==> Creating Python virtual environment..." \
 RUN echo "==> Installing Python packages inside virtual environment..." \
  && /opt/venv/bin/pip install --upgrade pip \
  && /opt/venv/bin/pip install langchain_experimental langchain langchain-openai langchain-community \
- && /opt/venv/bin/pip install chromadb openai tiktoken jq streamlit aiofiles aiohttp
+ && /opt/venv/bin/pip install chromadb openai tiktoken jq streamlit aiofiles aiohttp nest_asyncio
 
 # Set the default PATH to use the virtual environment’s pip and python
 ENV PATH="/opt/venv/bin:$PATH"
